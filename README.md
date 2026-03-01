@@ -9,6 +9,12 @@
 </p>
 
 <p align="center">
+  <a href="https://connecto-one.vercel.app/" target="_blank">
+    <img src="https://img.shields.io/badge/Live_Demo-Visit_Connecto-FF6B6B?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
+  </a>
+</p>
+
+<p align="center">
   <a href="#features">Features</a> •
   <a href="#tech-stack">Tech Stack</a> •
   <a href="#getting-started">Getting Started</a> •
