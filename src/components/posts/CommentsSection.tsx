@@ -6,6 +6,11 @@ import { Send } from "lucide-react";
 import { useComments, useAddComment } from "@/hooks/useComments";
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
+import { Database } from "@/integrations/supabase/types";
+
+type CommentWithProfile = Database['public']['Tables']['comments']['Row'] & {
+  profiles: Database['public']['Tables']['profiles']['Row'] | null;
+};
 
 const CommentsSection = ({ postId, postOwnerId }: { postId: string; postOwnerId?: string }) => {
   const { data: comments, isLoading } = useComments(postId);
@@ -25,7 +30,7 @@ const CommentsSection = ({ postId, postOwnerId }: { postId: string; postOwnerId?
         <p className="text-sm text-muted-foreground">Loading comments...</p>
       ) : (
         <div className="space-y-3 max-h-60 overflow-y-auto">
-          {comments?.map((comment: any) => (
+          {comments?.map((comment: CommentWithProfile) => (
             <div key={comment.id} className="flex gap-2">
               <Link to={`/profile/${comment.profiles?.username}`}>
                 <Avatar className="h-7 w-7">

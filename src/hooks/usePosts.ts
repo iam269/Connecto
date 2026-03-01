@@ -14,6 +14,7 @@ export interface PostWithProfile {
     username: string | null;
     full_name: string | null;
     avatar_url: string | null;
+    last_seen_at: string | null;
   } | null;
   likes_count: number;
   comments_count: number;
@@ -49,7 +50,7 @@ export const useFeedPosts = () => {
       const userIds = [...new Set(posts?.map((p) => p.user_id) || [])];
       const { data: profiles } = await supabase
         .from("profiles")
-        .select("user_id, username, full_name, avatar_url")
+        .select("user_id, username, full_name, avatar_url, last_seen_at")
         .in("user_id", userIds);
       const profileMap = new Map(profiles?.map((p) => [p.user_id, p]));
 
@@ -101,7 +102,7 @@ export const useUserPosts = (userId?: string) => {
       // Get profile for the user
       const { data: profile } = await supabase
         .from("profiles")
-        .select("user_id, username, full_name, avatar_url")
+        .select("user_id, username, full_name, avatar_url, last_seen_at")
         .eq("user_id", userId)
         .single();
 
@@ -162,7 +163,7 @@ export const useSavedPosts = () => {
       const userIds = [...new Set(posts.map((p) => p.user_id))];
       const { data: profiles } = await supabase
         .from("profiles")
-        .select("user_id, username, full_name, avatar_url")
+        .select("user_id, username, full_name, avatar_url, last_seen_at")
         .in("user_id", userIds);
       const profileMap = new Map(profiles?.map((p) => [p.user_id, p]));
 
@@ -222,7 +223,7 @@ export const useLikedPosts = () => {
       const userIds = [...new Set(posts.map((p) => p.user_id))];
       const { data: profiles } = await supabase
         .from("profiles")
-        .select("user_id, username, full_name, avatar_url")
+        .select("user_id, username, full_name, avatar_url, last_seen_at")
         .in("user_id", userIds);
       const profileMap = new Map(profiles?.map((p) => [p.user_id, p]));
 

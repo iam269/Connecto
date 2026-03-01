@@ -134,8 +134,8 @@ const Profile = () => {
             </Link>
           </div>
 
-          {/* Stories */}
-          <Stories />
+          {/* Stories - Only show current user's stories */}
+          {user?.id && <Stories userId={user.id} />}
         </div>
 
         {/* Tabs */}

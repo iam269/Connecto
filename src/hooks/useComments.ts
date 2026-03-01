@@ -17,7 +17,7 @@ export const useComments = (postId?: string) => {
       const userIds = [...new Set(comments?.map((c) => c.user_id) || [])];
       const { data: profiles } = await supabase
         .from("profiles")
-        .select("user_id, username, full_name, avatar_url")
+        .select("user_id, username, full_name, avatar_url, last_seen_at")
         .in("user_id", userIds);
       const profileMap = new Map(profiles?.map((p) => [p.user_id, p]));
 

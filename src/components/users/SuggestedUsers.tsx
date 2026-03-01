@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
-const SuggestedUserItem = ({ profile }: { profile: { user_id: string; username: string | null; full_name: string | null; avatar_url: string | null } }) => {
+const SuggestedUserItem = ({ profile }: { profile: { user_id: string; username: string | null; full_name: string | null; avatar_url: string | null; last_seen_at: string | null } }) => {
   const { data: isFollowing } = useIsFollowing(profile.user_id);
   const toggleFollow = useToggleFollow();
 

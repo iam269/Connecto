@@ -2,16 +2,30 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useStories, StoryWithProfile } from "@/hooks/useStories";
+import { useStories, useUserStories, StoryWithProfile } from "@/hooks/useStories";
 import { useAuth } from "@/contexts/AuthContext";
 import StoryViewer from "./StoryViewer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router-dom";
 
-const Stories = () => {
-  const { data: stories, isLoading } = useStories();
+interface StoriesProps {
+  userId?: string;
+}
+
+const Stories = ({ userId }: StoriesProps) => {
+  const { data: allStories, isLoading: isAllLoading } = useStories();
+  const { data: userStories, isLoading: isUserLoading } = useUserStories(userId);
   const { user } = useAuth();
   const navigate = useNavigate();
+  
+  const stories = userId ? userStories : allStories;
+  const isLoading = userId ? isUserLoading : isAllLoading;
+  
+  // For single user profile, show stories without grouping
+  const isSingleUser = !!userId;
+
+  // Check if user has their own story
+  const userHasStory = stories?.some(s => s.user_id === user?.id);
   const [selectedStoryIndex, setSelectedStoryIndex] = useState<number | null>(null);
   const [viewerOpen, setViewerOpen] = useState(false);
 
@@ -47,9 +61,6 @@ const Stories = () => {
   );
 
   const isOwner = user?.id === flattenedStories[selectedStoryIndex || 0]?.user_id;
-
-  // Check if user has their own story
-  const userHasStory = stories?.some(s => s.user_id === user?.id);
 
   if (isLoading) {
     return (

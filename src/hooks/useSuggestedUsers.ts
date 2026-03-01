@@ -20,7 +20,7 @@ export const useSuggestedUsers = (limit = 5) => {
       // Fetch all profiles, filter client-side
       const { data: profiles } = await supabase
         .from("profiles")
-        .select("user_id, username, full_name, avatar_url")
+        .select("user_id, username, full_name, avatar_url, last_seen_at")
         .order("created_at", { ascending: false })
         .limit(50);
 

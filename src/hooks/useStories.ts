@@ -12,6 +12,7 @@ export interface StoryWithProfile {
     username: string | null;
     full_name: string | null;
     avatar_url: string | null;
+    last_seen_at: string | null;
   } | null;
   view_count?: number;
   is_viewed?: boolean;
@@ -41,7 +42,7 @@ export const useStories = () => {
       // Get profiles
       const { data: profiles } = await supabase
         .from("profiles")
-        .select("user_id, username, full_name, avatar_url")
+        .select("user_id, username, full_name, avatar_url, last_seen_at")
         .in("user_id", userIds);
       
       const profileMap = new Map(profiles?.map((p) => [p.user_id, p]));
@@ -76,6 +77,70 @@ export const useStories = () => {
         is_viewed: viewedStoryIds.has(story.id),
       })) as StoryWithProfile[];
     },
+  });
+};
+
+export const useUserStories = (userId?: string) => {
+  const { user } = useAuth();
+  const viewingUserId = userId || user?.id;
+
+  return useQuery({
+    queryKey: ["user-stories", viewingUserId],
+    queryFn: async () => {
+      if (!viewingUserId) return [];
+
+      // Get stories for specific user that haven't expired
+      const now = new Date().toISOString();
+      
+      const { data: stories, error } = await supabase
+        .from("stories")
+        .select("*")
+        .eq("user_id", viewingUserId)
+        .gt("expires_at", now)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      if (!stories || stories.length === 0) return [];
+
+      // Get profile for the user
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("user_id, username, full_name, avatar_url, last_seen_at")
+        .eq("user_id", viewingUserId);
+      
+      const profileMap = new Map(profiles?.map((p) => [p.user_id, p]));
+
+      // Get view counts and check if current user viewed
+      const storyIds = stories.map((s) => s.id);
+      const [viewsRes, userViewsRes] = await Promise.all([
+        supabase
+          .from("story_views")
+          .select("story_id")
+          .in("story_id", storyIds),
+        user 
+          ? supabase
+              .from("story_views")
+              .select("story_id")
+              .eq("viewer_id", user.id)
+              .in("story_id", storyIds)
+          : Promise.resolve({ data: [] }),
+      ]);
+
+      const viewsMap: Record<string, number> = {};
+      viewsRes.data?.forEach((v) => {
+        viewsMap[v.story_id] = (viewsMap[v.story_id] || 0) + 1;
+      });
+
+      const viewedStoryIds = new Set(userViewsRes.data?.map((v) => v.story_id) || []);
+
+      return stories.map((story) => ({
+        ...story,
+        profiles: profileMap.get(story.user_id) || null,
+        view_count: viewsMap[story.id] || 0,
+        is_viewed: viewedStoryIds.has(story.id),
+      })) as StoryWithProfile[];
+    },
+    enabled: !!viewingUserId,
   });
 };
 
@@ -162,7 +227,7 @@ export const useStoryViewers = (storyId: string) => {
       
       const { data: profiles } = await supabase
         .from("profiles")
-        .select("user_id, username, full_name, avatar_url")
+        .select("user_id, username, full_name, avatar_url, last_seen_at")
         .in("user_id", viewerIds);
 
       const profileMap = new Map(profiles?.map((p) => [p.user_id, p]));
