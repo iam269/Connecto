@@ -1,17 +1,24 @@
-# Connecto - Social Media Platform
+# Connecto - Social Media Platform 🎉
 
 <p align="center">
   <img src="./src/assets/connecto-logo.png" alt="Connecto Logo" width="200" />
 </p>
 
 <p align="center">
-  A modern social media platform built with React, TypeScript, and Supabase
+  A modern social media platform built with React, TypeScript, and Supabase 🚀
 </p>
 
 <p align="center">
   <a href="https://connecto-one.vercel.app/" target="_blank">
     <img src="https://img.shields.io/badge/Live_Demo-Visit_Connecto-FF6B6B?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
   </a>
+</p>
+
+## Screenshots
+
+<p align="center">
+  <img src="./src/assets/Screenshot1.png" alt="Screenshot 1" width="400" />
+  <img src="./src/assets/Screenshot2.png" alt="Screenshot 2" width="400" />
 </p>
 
 <p align="center">
@@ -25,71 +32,71 @@
 
 ---
 
-## Features
+## Features ✨
 
-### Core Features
-- **User Authentication** - Secure sign up/sign in with email and password
-- **Posts** - Create, view, like, and comment on posts
-- **Stories** - Share temporary content that expires after 24 hours
-- **Comments** - Interactive comment system on posts
-- **Connections** - Send and manage connection requests
-- **Follow System** - Follow other users to see their content
-- **Messages** - Real-time private messaging between users
-- **Notifications** - Stay updated with notifications for various activities
-- **User Profiles** - Customizable profiles with bio, avatar, and cover image
-- **Discover/Explore** - Discover new content and users
-- **Dark/Light Theme** - System-wide theme switching
+### Core Features ✨
+- **User Authentication** 🔐 - Secure sign up/sign in with email and password
+- **Posts** 📝 - Create, view, like, and comment on posts
+- **Stories** 📸 - Share temporary content that expires after 24 hours
+- **Comments** 💬 - Interactive comment system on posts
+- **Connections** 🤝 - Send and manage connection requests
+- **Follow System** 👥 - Follow other users to see their content
+- **Messages** 💭 - Real-time private messaging between users
+- **Notifications** 🔔 - Stay updated with notifications for various activities
+- **User Profiles** 👤 - Customizable profiles with bio, avatar, and cover image
+- **Discover/Explore** 🔍 - Discover new content and users
+- **Dark/Light Theme** 🌙 - System-wide theme switching
 
-### Additional Features
-- **Image Upload** - Upload images for posts and profiles
-- **Video Upload** - Upload videos for stories and posts
-- **Post Insights** - View engagement metrics on your posts
-- **Suggested Users** - Get recommendations for users to follow
-
----
-
-## Tech Stack
-
-### Frontend
-- **React 18** - UI library
-- **TypeScript** - Type-safe JavaScript
-- **Vite** - Build tool and dev server
-- **Tailwind CSS** - Utility-first CSS framework
-- **Shadcn/UI** - Component library
-- **React Router** - Client-side routing
-- **Supabase Client** - Backend integration
-
-### Backend (Supabase)
-- **PostgreSQL** - Relational database
-- **Authentication** - User management
-- **Storage** - File storage for images/videos
-- **Realtime** - Real-time subscriptions
-- **Edge Functions** - Serverless functions
-
-### Development Tools
-- **ESLint** - Code linting
-- **Vitest** - Testing framework
-- **Bun** - JavaScript runtime and package manager
+### Additional Features 💡
+- **Image Upload** 🖼️ - Upload images for posts and profiles
+- **Video Upload** 🎥 - Upload videos for stories and posts
+- **Post Insights** 📊 - View engagement metrics on your posts
+- **Suggested Users** 🎯 - Get recommendations for users to follow
 
 ---
 
-## Getting Started
+## Tech Stack 🛠️
 
-### Prerequisites
+### Frontend 🎨
+- **React 18** ⚛️ - UI library
+- **TypeScript** 📘 - Type-safe JavaScript
+- **Vite** ⚡ - Build tool and dev server
+- **Tailwind CSS** 💨 - Utility-first CSS framework
+- **Shadcn/UI** 🎭 - Component library
+- **React Router** 🛤️ - Client-side routing
+- **Supabase Client** ☁️ - Backend integration
 
-- **Node.js** 18+ 
-- **Bun** (recommended) or npm/yarn
-- **Supabase Account** - [Create one here](https://supabase.com)
+### Backend (Supabase) ☁️
+- **PostgreSQL** 🐘 - Relational database
+- **Authentication** 🔐 - User management
+- **Storage** 📦 - File storage for images/videos
+- **Realtime** 📡 - Real-time subscriptions
+- **Edge Functions** ⚡ - Serverless functions
 
-### Installation
+### Development Tools 🔧
+- **ESLint** 🔍 - Code linting
+- **Vitest** 🧪 - Testing framework
+- **Bun** 🐰 - JavaScript runtime and package manager
 
-1. **Clone the repository**
+---
+
+## Getting Started 🏁
+
+### Prerequisites 📋
+
+- **Node.js** 18+ 🟢
+- **Bun** 🐰 (recommended) or npm/yarn 📦
+- **Supabase Account** ☁️ - [Create one here](https://supabase.com)
+
+### Installation 📦
+
+1. **Clone the repository** 📂
    ```bash
    git clone <repository-url>
    cd Connecto
    ```
 
-2. **Install dependencies**
+2. **Install dependencies** 📥
    ```bash
    # Using bun (recommended)
    bun install
@@ -98,7 +105,7 @@
    npm install
    ```
 
-3. **Set up Supabase**
+3. **Set up Supabase** 🔧
 
    a. Create a new Supabase project at [supabase.com](https://supabase.com)
    
@@ -112,7 +119,7 @@
    
    d. Set up authentication settings
 
-4. **Configure Environment Variables**
+4. **Configure Environment Variables** ⚙️
 
    Create a `.env` file in the root directory:
    ```env
@@ -120,7 +127,7 @@
    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
    ```
 
-5. **Start the development server**
+5. **Start the development server** 🚂
    ```bash
    # Using bun
    bun dev
@@ -129,12 +136,12 @@
    npm run dev
    ```
 
-6. **Open your browser**
+6. **Open your browser** 🌐
    Navigate to `http://localhost:5173`
 
 ---
 
-## Project Structure
+## Project Structure 📁
 
 ```
 Connecto/
@@ -235,14 +242,14 @@ Connecto/
 
 ---
 
-## Environment Variables
+## Environment Variables 🌍
 
 | Variable | Description | Required |
 |----------|-------------|----------|
 | `VITE_SUPABASE_URL` | Your Supabase project URL | Yes |
 | `VITE_SUPABASE_ANON_KEY` | Your Supabase anon key | Yes |
 
-### Getting Supabase Credentials
+### Getting Supabase Credentials 🔑
 
 1. Go to [Supabase Dashboard](https://supabase.com/dashboard)
 2. Select your project
@@ -251,7 +258,7 @@ Connecto/
 
 ---
 
-## Available Scripts
+## Available Scripts 📜
 
 ```bash
 # Development
@@ -272,48 +279,48 @@ bun typecheck    # Run TypeScript type checking
 
 ---
 
-## Database Schema
+## Database Schema 🗄️
 
 The application uses the following main tables:
 
-- **users** - User profiles and information
-- **posts** - User posts with text, images, videos
-- **comments** - Comments on posts
-- **stories** - Temporary stories (24h expiry)
-- **follows** - Follow relationships
-- **connections** - Connection requests and status
-- **messages** - Private messages
-- **notifications** - User notifications
-- **post_likes** - Post likes
-- **story_views** - Story view tracking
+- **users** 👤 - User profiles and information
+- **posts** 📄 - User posts with text, images, videos
+- **comments** 💬 - Comments on posts
+- **stories** ⏰ - Temporary stories (24h expiry)
+- **follows** 👥 - Follow relationships
+- **connections** 🤝 - Connection requests and status
+- **messages** ✉️ - Private messages
+- **notifications** 🔔 - User notifications
+- **post_likes** ❤️ - Post likes
+- **story_views** 👁️ - Story view tracking
 
 ---
 
-## Contributing
+## Contributing 🤝
 
 Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting pull requests.
 
 ---
 
-## Code of Conduct
+## Code of Conduct 📖
 
 Please read our [Code of Conduct](CODE_OF_CONDUCT.md) to keep our community approachable and respectable.
 
 ---
 
-## Security
+## Security 🔒
 
 For security vulnerabilities, please read our [Security Policy](SECURITY.md).
 
 ---
 
-## License
+## License 📄
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## Acknowledgments
+## Acknowledgments 🙏
 
 - [Shadcn](https://ui.shadcn.com/) for the UI components
 - [Supabase](https://supabase.com/) for the backend infrastructure
