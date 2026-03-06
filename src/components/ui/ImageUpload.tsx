@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ImagePlus, X, GripVertical, Upload } from "lucide-react";
@@ -122,8 +122,9 @@ const ImageUpload = ({
         if (error) throw error;
         const { data: urlData } = supabase.storage.from("media").getPublicUrl(path);
         newUrls.push(urlData.publicUrl);
-      } catch (err: any) {
-        toast({ title: "Upload failed", description: err.message, variant: "destructive" });
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Upload failed';
+        toast({ title: "Upload failed", description: message, variant: "destructive" });
       }
       setProgress(((i + 1) / total) * 100);
     }

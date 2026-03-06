@@ -2,7 +2,7 @@ import Layout from "@/components/layout/Layout";
 import { useProfile } from "@/hooks/useProfile";
 import { useUserPosts, useSavedPosts, useLikedPosts, PostWithProfile } from "@/hooks/usePosts";
 import { useFollowCounts } from "@/hooks/useFollows";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { useFollowersList, useFollowingList, ConnectionProfile } from "@/hooks/useConnections";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";

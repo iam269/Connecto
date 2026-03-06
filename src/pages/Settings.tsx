@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import { useProfile, useUpdateProfile } from "@/hooks/useProfile";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/contexts/ThemeContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,10 @@ import { useToast } from "@/hooks/use-toast";
 import { Moon, Save, Trash2, AlertTriangle } from "lucide-react";
 import ImageUpload from "@/components/ui/ImageUpload";
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
+
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+type ProfileUpdate = Database["public"]["Tables"]["profiles"]["Update"];
 
 const Settings = () => {
   const { data: profile } = useProfile();
@@ -41,9 +45,9 @@ const Settings = () => {
       setFullName(profile.full_name || "");
       setBio(profile.bio || "");
       setAvatarUrl(profile.avatar_url || "");
-      setCoverUrl((profile as any).cover_image_url || "");
-      setLocation((profile as any).location || "");
-      setWebsite((profile as any).website || "");
+      setCoverUrl(profile.cover_image_url || "");
+      setLocation(profile.location || "");
+      setWebsite(profile.website || "");
     }
   }, [profile]);
 
@@ -57,10 +61,11 @@ const Settings = () => {
         cover_image_url: coverUrl.trim() || undefined,
         location: location.trim() || undefined,
         website: website.trim() || undefined,
-      } as any);
+      } as ProfileUpdate);
       toast({ title: "Profile updated!" });
-    } catch (error: any) {
-      toast({ title: "Failed to update", description: error.message, variant: "destructive" });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to update';
+      toast({ title: "Failed to update", description: message, variant: "destructive" });
     }
   };
 
@@ -79,8 +84,9 @@ const Settings = () => {
 
       toast({ title: "Account deleted", description: "Your account has been permanently deleted." });
       await signOut();
-    } catch (error: any) {
-      toast({ title: "Failed to delete account", description: error.message, variant: "destructive" });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to delete account';
+      toast({ title: "Failed to delete account", description: message, variant: "destructive" });
     } finally {
       setIsDeleting(false);
       setShowDeleteDialog(false);

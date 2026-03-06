@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
@@ -9,18 +9,30 @@ import { supabase } from "@/integrations/supabase/client";
 export function useUpdateLastSeen() {
   const { user } = useAuth();
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const isUpdatingRef = useRef(false);
 
   useEffect(() => {
     if (!user) return;
 
     const updateLastSeen = async () => {
+      // Prevent concurrent updates
+      if (isUpdatingRef.current) return;
+      isUpdatingRef.current = true;
+      
       try {
-        await supabase
+        const { error } = await supabase
           .from("profiles")
           .update({ last_seen_at: new Date().toISOString() })
           .eq("user_id", user.id);
+          
+        if (error) {
+          // Silently handle errors - profile might not exist yet
+          console.debug("Could not update last_seen_at:", error.message);
+        }
       } catch (error) {
-        console.error("Error updating last_seen_at:", error);
+        console.debug("Error updating last_seen_at:", error);
+      } finally {
+        isUpdatingRef.current = false;
       }
     };
 

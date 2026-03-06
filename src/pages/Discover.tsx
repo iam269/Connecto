@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { useToggleFollow, useIsFollowing } from "@/hooks/useFollows";
 import { Link } from "react-router-dom";
 import { Search, UserPlus } from "lucide-react";
@@ -58,7 +58,11 @@ const Discover = () => {
   );
 };
 
-const UserItem = ({ profile }: { profile: any }) => {
+import { Database } from "@/integrations/supabase/types";
+
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+
+const UserItem = ({ profile }: { profile: Profile }) => {
   const { data: isFollowing } = useIsFollowing(profile.user_id);
   const toggleFollow = useToggleFollow();
 

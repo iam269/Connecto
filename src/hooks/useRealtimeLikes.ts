@@ -21,7 +21,7 @@ export function useRealtimeLikes() {
           table: "likes",
         },
         (payload) => {
-          console.log("Like change received!", payload);
+          console.debug("Like change received!", payload);
           
           // Invalidate all post-related queries to refresh the data
           queryClient.invalidateQueries({ queryKey: ["feed-posts"] });
@@ -31,7 +31,11 @@ export function useRealtimeLikes() {
           queryClient.invalidateQueries({ queryKey: ["liked-posts"] });
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'CHANNEL_ERROR') {
+          console.debug("Likes channel error - tables might not exist yet");
+        }
+      });
 
     // Also listen for posts changes (for new posts)
     const postsChannel = supabase
@@ -44,12 +48,16 @@ export function useRealtimeLikes() {
           table: "posts",
         },
         () => {
-          console.log("New post received!");
+          console.debug("New post received!");
           queryClient.invalidateQueries({ queryKey: ["feed-posts"] });
           queryClient.invalidateQueries({ queryKey: ["explore-posts"] });
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'CHANNEL_ERROR') {
+          console.debug("Posts channel error - tables might not exist yet");
+        }
+      });
 
     return () => {
       supabase.removeChannel(likesChannel);

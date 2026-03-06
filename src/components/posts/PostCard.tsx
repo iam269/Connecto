@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { PostWithProfile, useToggleLike, useToggleSave, useDeletePost } from "@/hooks/usePosts";
 import { useRecordView } from "@/hooks/usePostViews";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import CommentsSection from "./CommentsSection";
 import PostInsights from "./PostInsights";

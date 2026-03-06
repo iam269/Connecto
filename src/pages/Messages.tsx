@@ -6,6 +6,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { MessageCircle } from "lucide-react";
+import { Database } from "@/integrations/supabase/types";
+
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+
+interface ConversationWithUser {
+  id: string;
+  otherUser?: Profile;
+  lastMessage?: { content: string | null; created_at: string };
+}
 
 const Messages = () => {
   const { data: conversations, isLoading } = useConversations();
@@ -33,7 +42,7 @@ const Messages = () => {
           </div>
         ) : (
           <div className="space-y-2">
-            {conversations?.map((conv: any) => (
+            {conversations?.map((conv: ConversationWithUser) => (
               <Link key={conv.id} to={`/messages/${conv.otherUser?.user_id}`}>
                 <Card className="transition-colors hover:bg-accent/50">
                   <CardContent className="flex items-center gap-3 p-3">

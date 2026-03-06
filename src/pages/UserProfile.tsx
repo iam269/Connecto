@@ -4,7 +4,7 @@ import { useProfileByUsername } from "@/hooks/useProfile";
 import { useUserPosts } from "@/hooks/usePosts";
 import { useFollowCounts, useIsFollowing, useToggleFollow } from "@/hooks/useFollows";
 import { useGetOrCreateConversation } from "@/hooks/useMessages";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";

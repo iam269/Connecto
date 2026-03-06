@@ -3,7 +3,7 @@ import { X, Eye, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { StoryWithProfile, useViewStory, useStoryViewers, useDeleteStory } from "@/hooks/useStories";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import {
   Dialog,
   DialogContent,
