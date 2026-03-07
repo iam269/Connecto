@@ -8,6 +8,7 @@ export interface AuthContextType {
   signUp: (email: string, password: string, metadata?: { username?: string; full_name?: string }) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  resendVerificationEmail: (email: string) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);

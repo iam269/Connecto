@@ -94,7 +94,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const value: AuthContextType = { user, session, loading, signUp, signIn, signOut };
+  const resendVerificationEmail = async (email: string) => {
+    try {
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email,
+      });
+      
+      if (error) {
+        if (error.message.includes("too many requests")) {
+          throw new Error("Too many requests. Please wait a few minutes before requesting another verification email.");
+        }
+        throw error;
+      }
+    } catch (error) {
+      console.error("Resend verification error:", error);
+      throw error;
+    }
+  };
+
+  const value: AuthContextType = { user, session, loading, signUp, signIn, signOut, resendVerificationEmail };
 
   return (
     <AuthContext.Provider value={value}>

@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Moon, Save, Trash2, AlertTriangle } from "lucide-react";
+import { Moon, Save, Trash2, AlertTriangle, Mail, CheckCircle2 } from "lucide-react";
 import ImageUpload from "@/components/ui/ImageUpload";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
@@ -22,7 +22,7 @@ type ProfileUpdate = Database["public"]["Tables"]["profiles"]["Update"];
 const Settings = () => {
   const { data: profile } = useProfile();
   const updateProfile = useUpdateProfile();
-  const { signOut } = useAuth();
+  const { user, signOut, resendVerificationEmail } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { toast } = useToast();
 
@@ -33,11 +33,14 @@ const Settings = () => {
   const [coverUrl, setCoverUrl] = useState("");
   const [location, setLocation] = useState("");
   const [website, setWebsite] = useState("");
+  const [isResending, setIsResending] = useState(false);
 
   // Delete account state
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const isEmailVerified = user?.email_confirmed_at != null;
 
   useEffect(() => {
     if (profile) {
@@ -91,6 +94,20 @@ const Settings = () => {
       setIsDeleting(false);
       setShowDeleteDialog(false);
       setDeleteConfirmation("");
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (!user?.email) return;
+    setIsResending(true);
+    try {
+      await resendVerificationEmail(user.email);
+      toast({ title: "Verification email sent!", description: "Please check your inbox and spam folder." });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to send verification email';
+      toast({ title: "Failed to send email", description: message, variant: "destructive" });
+    } finally {
+      setIsResending(false);
     }
   };
 
@@ -159,6 +176,58 @@ const Settings = () => {
               <Save className="mr-2 h-4 w-4" />
               {updateProfile.isPending ? "Saving..." : "Save Changes"}
             </Button>
+          </CardContent>
+        </Card>
+
+        {/* Email Verification Status */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Mail className="h-5 w-5" />
+              Email Verification
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-3">
+              {isEmailVerified ? (
+                <>
+                  <CheckCircle2 className="h-5 w-5 text-green-500" />
+                  <div>
+                    <p className="font-medium">Your email is verified</p>
+                    <p className="text-sm text-muted-foreground">{user?.email}</p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Mail className="h-5 w-5 text-amber-500" />
+                  <div>
+                    <p className="font-medium">Email not verified</p>
+                    <p className="text-sm text-muted-foreground">{user?.email}</p>
+                  </div>
+                </>
+              )}
+            </div>
+            {!isEmailVerified && (
+              <div className="text-sm text-muted-foreground">
+                <p>Please verify your email to:</p>
+                <ul className="list-disc pl-5 mt-1 space-y-0.5">
+                  <li>Post content</li>
+                  <li>Send messages</li>
+                  <li>Receive notifications</li>
+                </ul>
+              </div>
+            )}
+            {!isEmailVerified && (
+              <Button 
+                variant="outline" 
+                onClick={handleResendVerification} 
+                disabled={isResending}
+                className="w-full"
+              >
+                <Mail className="mr-2 h-4 w-4" />
+                {isResending ? "Sending..." : "Resend Verification Email"}
+              </Button>
+            )}
           </CardContent>
         </Card>
 
