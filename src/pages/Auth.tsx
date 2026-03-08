@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Eye, EyeOff } from "lucide-react";
 import connectoLogo from "@/assets/connecto-logo.png";
 import loginImage from "@/assets/login.avif";
 
@@ -21,10 +22,12 @@ const Auth = () => {
   // Login state
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
 
   // Signup state
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [signupUsername, setSignupUsername] = useState("");
   const [signupFullName, setSignupFullName] = useState("");
 
@@ -117,10 +120,8 @@ const Auth = () => {
         username: signupUsername,
         full_name: signupFullName,
       });
-      toast({
-        title: "Account created!",
-        description: "Please check your email to verify your account.",
-      });
+      // User is automatically signed in after signup
+      navigate("/");
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An unexpected error occurred";
       toast({ title: "Signup failed", description: message, variant: "destructive" });
@@ -168,13 +169,22 @@ const Auth = () => {
                   onChange={(e) => setLoginEmail(e.target.value)}
                   required
                 />
-                <Input
-                  type="password"
-                  placeholder="Password"
-                  value={loginPassword}
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                  required
-                />
+                <div className="relative">
+                  <Input
+                    type={showLoginPassword ? "text" : "password"}
+                    placeholder="Password"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginPassword(!showLoginPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showLoginPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Logging in..." : "Log In"}
                 </Button>
@@ -202,14 +212,23 @@ const Auth = () => {
                   onChange={(e) => setSignupEmail(e.target.value)}
                   required
                 />
-                <Input
-                  type="password"
-                  placeholder="Password (min 6 chars)"
-                  value={signupPassword}
-                  onChange={(e) => setSignupPassword(e.target.value)}
-                  minLength={6}
-                  required
-                />
+                <div className="relative">
+                  <Input
+                    type={showSignupPassword ? "text" : "password"}
+                    placeholder="Password (min 6 chars)"
+                    value={signupPassword}
+                    onChange={(e) => setSignupPassword(e.target.value)}
+                    minLength={6}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowSignupPassword(!showSignupPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showSignupPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Creating account..." : "Sign Up"}
                 </Button>

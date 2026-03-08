@@ -31,33 +31,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
-  const signUp = async (email: string, password: string, metadata?: { username?: string; full_name?: string }) => {
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth`,
-          data: metadata,
-        },
-      });
-      
-      if (error) {
-        // Provide more user-friendly error messages
-        if (error.message.includes("already registered") || error.message.includes("already been registered")) {
-          throw new Error("This email is already registered. Please try logging in instead.");
-        }
-        if (error.message.includes("Password")) {
-          throw new Error("Password must be at least 6 characters long.");
-        }
-        throw error;
-      }
-    } catch (error) {
-      console.error("Signup error:", error);
-      throw error;
-    }
-  };
-
   const signIn = async (email: string, password: string) => {
     try {
       const { error } = await supabase.auth.signInWithPassword({ 
@@ -80,6 +53,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (error) {
       console.error("Signin error:", error);
+      throw error;
+    }
+  };
+
+  const signUp = async (email: string, password: string, metadata?: { username?: string; full_name?: string }) => {
+    try {
+      // Validate password minimum length
+      if (password.length < 6) {
+        throw new Error("Password must be at least 6 characters long.");
+      }
+
+      // Use Edge Function to create user without email verification
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ email, password, metadata }),
+      });
+
+      const data = await response.json();
+      
+      if (data.error) {
+        if (data.error.includes("already registered")) {
+          throw new Error("This email is already registered. Please try logging in instead.");
+        }
+        throw new Error(data.error);
+      }
+
+      // Automatically sign in after successful signup
+      await signIn(email, password);
+    } catch (error) {
+      console.error("Signup error:", error);
       throw error;
     }
   };
