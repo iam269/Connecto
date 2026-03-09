@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
-import { useNavigate, Navigate, useSearchParams } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { Eye, EyeOff } from "lucide-react";
 import connectoLogo from "@/assets/connecto-logo.png";
 import loginImage from "@/assets/login.avif";
@@ -16,8 +15,6 @@ const Auth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [searchParams] = useSearchParams();
-  const [confirmingEmail, setConfirmingEmail] = useState(false);
 
   // Login state
   const [loginEmail, setLoginEmail] = useState("");
@@ -31,72 +28,7 @@ const Auth = () => {
   const [signupUsername, setSignupUsername] = useState("");
   const [signupFullName, setSignupFullName] = useState("");
 
-  // Handle email confirmation from URL hash
-  useEffect(() => {
-    const handleEmailConfirmation = async () => {
-      // Check if there's a hash in the URL (from Supabase email confirmation)
-      const hashParams = new URLSearchParams(window.location.hash.substring(1));
-      const accessToken = hashParams.get("access_token");
-      const refreshToken = hashParams.get("refresh_token");
-      const type = hashParams.get("type");
-
-      if (accessToken && refreshToken && (type === "signup" || type === "email_change" || type === "recovery")) {
-        setConfirmingEmail(true);
-        try {
-          const { error } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          });
-
-          if (error) {
-            toast({ 
-              title: "Email confirmation failed", 
-              description: error.message, 
-              variant: "destructive" 
-            });
-          } else {
-            toast({ 
-              title: "Email verified!", 
-              description: "Your account has been successfully verified." 
-            });
-            navigate("/");
-          }
-        } catch (error) {
-          console.error("Email confirmation error:", error);
-          toast({ 
-            title: "Email confirmation failed", 
-            description: "An unexpected error occurred. Please try again.", 
-            variant: "destructive" 
-          });
-        } finally {
-          setConfirmingEmail(false);
-          // Clean up URL
-          window.location.hash = "";
-        }
-      }
-    };
-
-    handleEmailConfirmation();
-  }, [navigate, toast]);
-
   if (user) return <Navigate to="/" replace />;
-
-  if (confirmingEmail) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <Card className="w-full max-w-md">
-          <CardHeader className="items-center text-center">
-            <img src={connectoLogo} alt="Connecto" className="mb-4 h-10" />
-            <CardTitle className="text-2xl">Confirming your email</CardTitle>
-            <CardDescription>Please wait while we verify your account...</CardDescription>
-          </CardHeader>
-          <CardContent className="flex justify-center">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

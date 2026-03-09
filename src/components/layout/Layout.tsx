@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
 import Sidebar from "./Sidebar";
 import MobileNav from "./MobileNav";
-import EmailVerificationBanner from "./EmailVerificationBanner";
 import { Link } from "react-router-dom";
 import { MessageCircle } from "lucide-react";
 import connectoLogo from "@/assets/connecto-logo.png";
@@ -30,7 +29,6 @@ const Layout = ({ children, title, subtitle }: LayoutProps) => {
       {/* Main content */}
       <main className="pt-14 pb-16 lg:pl-[72px] lg:pt-0 lg:pb-0 xl:pl-[240px]">
         <div className="mx-auto max-w-2xl px-4 py-6 space-y-4">
-          <EmailVerificationBanner />
           {title && (
             <div className="mb-2">
               <h1 className="text-2xl font-bold">{title}</h1>

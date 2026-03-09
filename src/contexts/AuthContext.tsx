@@ -43,9 +43,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (error.message.includes("Invalid login credentials") || error.message.includes("invalid")) {
           throw new Error("Invalid email or password. Please check your credentials and try again.");
         }
-        if (error.message.includes("Email not confirmed")) {
-          throw new Error("Please check your email to confirm your account before logging in.");
-        }
         if (error.message.includes("Too many requests")) {
           throw new Error("Too many login attempts. Please wait a few minutes and try again.");
         }
@@ -102,26 +99,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const resendVerificationEmail = async (email: string) => {
-    try {
-      const { error } = await supabase.auth.resend({
-        type: "signup",
-        email,
-      });
-      
-      if (error) {
-        if (error.message.includes("too many requests")) {
-          throw new Error("Too many requests. Please wait a few minutes before requesting another verification email.");
-        }
-        throw error;
-      }
-    } catch (error) {
-      console.error("Resend verification error:", error);
-      throw error;
-    }
-  };
-
-  const value: AuthContextType = { user, session, loading, signUp, signIn, signOut, resendVerificationEmail };
+  const value: AuthContextType = { user, session, loading, signUp, signIn, signOut };
 
   return (
     <AuthContext.Provider value={value}>
