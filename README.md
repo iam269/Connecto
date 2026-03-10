@@ -52,6 +52,11 @@
 - **Video Upload** 🎥 - Upload videos for stories and posts
 - **Post Insights** 📊 - View engagement metrics on your posts
 - **Suggested Users** 🎯 - Get recommendations for users to follow
+- **Online Status** 🟢 - See when users are online or last active
+- **Real-time Updates** ⚡ - Live updates for likes, comments, and posts
+- **Account Deletion** 🗑️ - Delete your account and data permanently
+- **Privacy Policy** 📜 - Comprehensive privacy policy page
+- **Terms of Service** 📋 - Terms and conditions page
 
 ---
 
@@ -219,13 +224,17 @@ Connecto/
 ├── supabase/                # Supabase configuration
 │   ├── config.toml          # Supabase config
 │   ├── functions/           # Edge functions
-│   │   └── delete-account/
-│   │       └── index.ts     # Delete account function
+│   │   ├── delete-account/
+│   │   │   └── index.ts     # Delete account function
+│   │   └── signup/
+│   │       └── index.ts     # Custom signup function
 │   └── migrations/          # Database migrations
 │       ├── 20260213165028_e62793d5-3a85-4007-aaf2-1c00786516a8.sql
 │       ├── 20260215164637_f1fe321b-40be-4525-995f-f720d815633a.sql
 │       ├── 20260216181409_f2603ac3-5bd1-41d5-93e8-3f79b2947bdb.sql
-│       └── 20260221100451_7332021c-64d6-475d-a30e-ae91ea2b38a3.sql
+│       ├── 20260221100451_7332021c-64d6-475d-a30e-ae91ea2b38a3.sql
+│       ├── 20260301132000_add_last_seen_at.sql
+│       └── 20260301134000_enable_realtime.sql
 ├── components.json          # Shadcn components config
 ├── eslint.config.js         # ESLint configuration
 ├── index.html               # HTML entry point
@@ -284,14 +293,16 @@ bun typecheck    # Run TypeScript type checking
 The application uses the following main tables:
 
 - **users** 👤 - User profiles and information
+- **profiles** 👤 - Extended profile information with last_seen_at
 - **posts** 📄 - User posts with text, images, videos
 - **comments** 💬 - Comments on posts
+- **likes** ❤️ - Post likes (real-time enabled)
 - **stories** ⏰ - Temporary stories (24h expiry)
 - **follows** 👥 - Follow relationships
 - **connections** 🤝 - Connection requests and status
 - **messages** ✉️ - Private messages
 - **notifications** 🔔 - User notifications
-- **post_likes** ❤️ - Post likes
+- **saved_posts** 📑 - Saved posts (real-time enabled)
 - **story_views** 👁️ - Story view tracking
 
 ---
