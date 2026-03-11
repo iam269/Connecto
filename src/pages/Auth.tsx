@@ -22,11 +22,11 @@ const Auth = () => {
   const [showLoginPassword, setShowLoginPassword] = useState(false);
 
   // Signup state
-  const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
   const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [signupUsername, setSignupUsername] = useState("");
   const [signupFullName, setSignupFullName] = useState("");
+  const [usernameError, setUsernameError] = useState("");
 
   if (user) return <Navigate to="/" replace />;
 
@@ -47,8 +47,9 @@ const Auth = () => {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setUsernameError("");
     try {
-      await signUp(signupEmail, signupPassword, {
+      await signUp(signupUsername, signupPassword, {
         username: signupUsername,
         full_name: signupFullName,
       });
@@ -56,7 +57,12 @@ const Auth = () => {
       navigate("/");
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An unexpected error occurred";
-      toast({ title: "Signup failed", description: message, variant: "destructive" });
+      // Check if username is taken
+      if (message.toLowerCase().includes("username") && message.toLowerCase().includes("taken")) {
+        setUsernameError(message);
+      } else {
+        toast({ title: "Signup failed", description: message, variant: "destructive" });
+      }
     } finally {
       setLoading(false);
     }
@@ -95,8 +101,8 @@ const Auth = () => {
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4">
                 <Input
-                  type="email"
-                  placeholder="Email"
+                  type="text"
+                  placeholder="Username or Email"
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
                   required
@@ -131,19 +137,20 @@ const Auth = () => {
                   onChange={(e) => setSignupFullName(e.target.value)}
                   required
                 />
-                <Input
-                  placeholder="Username"
-                  value={signupUsername}
-                  onChange={(e) => setSignupUsername(e.target.value)}
-                  required
-                />
-                <Input
-                  type="email"
-                  placeholder="Email"
-                  value={signupEmail}
-                  onChange={(e) => setSignupEmail(e.target.value)}
-                  required
-                />
+                <div>
+                  <Input
+                    placeholder="Username"
+                    value={signupUsername}
+                    onChange={(e) => {
+                      setSignupUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''));
+                      setUsernameError("");
+                    }}
+                    required
+                  />
+                  {usernameError && (
+                    <p className="text-sm text-red-500 mt-1">{usernameError}</p>
+                  )}
+                </div>
                 <div className="relative">
                   <Input
                     type={showSignupPassword ? "text" : "password"}
