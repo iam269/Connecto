@@ -5,8 +5,10 @@ export interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string, metadata?: { username?: string; full_name?: string }) => Promise<void>;
-  signIn: (email: string, password: string) => Promise<void>;
+  isGuest: boolean;
+  signUp: (username: string, password: string, metadata?: { username?: string; full_name?: string }) => Promise<void>;
+  signIn: (emailOrUsername: string, password: string) => Promise<void>;
+  signInAsGuest: () => Promise<void>;
   signOut: () => Promise<void>;
 }
 

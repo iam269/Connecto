@@ -22,7 +22,7 @@ type ProfileUpdate = Database["public"]["Tables"]["profiles"]["Update"];
 const Settings = () => {
   const { data: profile } = useProfile();
   const updateProfile = useUpdateProfile();
-  const { signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { toast } = useToast();
 

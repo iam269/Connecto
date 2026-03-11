@@ -6,11 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { Eye, EyeOff } from "lucide-react";
 import connectoLogo from "@/assets/connecto-logo.png";
 import loginImage from "@/assets/login.avif";
 
 const Auth = () => {
-  const { user, signIn, signUp } = useAuth();
+  const { user, signIn, signUp, signInAsGuest } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -18,12 +19,14 @@ const Auth = () => {
   // Login state
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
 
   // Signup state
-  const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [signupUsername, setSignupUsername] = useState("");
   const [signupFullName, setSignupFullName] = useState("");
+  const [usernameError, setUsernameError] = useState("");
 
   if (user) return <Navigate to="/" replace />;
 
@@ -44,18 +47,35 @@ const Auth = () => {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setUsernameError("");
     try {
-      await signUp(signupEmail, signupPassword, {
+      await signUp(signupUsername, signupPassword, {
         username: signupUsername,
         full_name: signupFullName,
       });
-      toast({
-        title: "Account created!",
-        description: "Please check your email to verify your account.",
-      });
+      // User is automatically signed in after signup
+      navigate("/");
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An unexpected error occurred";
-      toast({ title: "Signup failed", description: message, variant: "destructive" });
+      // Check if username is taken
+      if (message.toLowerCase().includes("username") && message.toLowerCase().includes("taken")) {
+        setUsernameError(message);
+      } else {
+        toast({ title: "Signup failed", description: message, variant: "destructive" });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGuestLogin = async () => {
+    setLoading(true);
+    try {
+      await signInAsGuest();
+      navigate("/");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "An unexpected error occurred";
+      toast({ title: "Guest login failed", description: message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -94,21 +114,49 @@ const Auth = () => {
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4">
                 <Input
-                  type="email"
-                  placeholder="Email"
+                  type="text"
+                  placeholder="Username or Email"
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
                   required
                 />
-                <Input
-                  type="password"
-                  placeholder="Password"
-                  value={loginPassword}
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                  required
-                />
+                <div className="relative">
+                  <Input
+                    type={showLoginPassword ? "text" : "password"}
+                    placeholder="Password"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginPassword(!showLoginPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showLoginPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Logging in..." : "Log In"}
+                </Button>
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">
+                      Or
+                    </span>
+                  </div>
+                </div>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  className="w-full" 
+                  onClick={handleGuestLogin}
+                  disabled={loading}
+                >
+                  Continue as Guest
                 </Button>
               </form>
             </TabsContent>
@@ -121,27 +169,37 @@ const Auth = () => {
                   onChange={(e) => setSignupFullName(e.target.value)}
                   required
                 />
-                <Input
-                  placeholder="Username"
-                  value={signupUsername}
-                  onChange={(e) => setSignupUsername(e.target.value)}
-                  required
-                />
-                <Input
-                  type="email"
-                  placeholder="Email"
-                  value={signupEmail}
-                  onChange={(e) => setSignupEmail(e.target.value)}
-                  required
-                />
-                <Input
-                  type="password"
-                  placeholder="Password (min 6 chars)"
-                  value={signupPassword}
-                  onChange={(e) => setSignupPassword(e.target.value)}
-                  minLength={6}
-                  required
-                />
+                <div>
+                  <Input
+                    placeholder="Username"
+                    value={signupUsername}
+                    onChange={(e) => {
+                      setSignupUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''));
+                      setUsernameError("");
+                    }}
+                    required
+                  />
+                  {usernameError && (
+                    <p className="text-sm text-red-500 mt-1">{usernameError}</p>
+                  )}
+                </div>
+                <div className="relative">
+                  <Input
+                    type={showSignupPassword ? "text" : "password"}
+                    placeholder="Password (min 6 chars)"
+                    value={signupPassword}
+                    onChange={(e) => setSignupPassword(e.target.value)}
+                    minLength={6}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowSignupPassword(!showSignupPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showSignupPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Creating account..." : "Sign Up"}
                 </Button>
