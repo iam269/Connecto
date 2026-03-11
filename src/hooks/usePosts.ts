@@ -23,11 +23,46 @@ export interface PostWithProfile {
 }
 
 export const useFeedPosts = () => {
-  const { user } = useAuth();
+  const { user, isGuest } = useAuth();
 
   return useQuery({
-    queryKey: ["feed-posts", user?.id],
+    queryKey: ["feed-posts", user?.id, isGuest],
     queryFn: async () => {
+      // For guests, fetch all recent posts
+      if (!user && isGuest) {
+        const { data: posts, error } = await supabase
+          .from("posts")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(50);
+
+        if (error) throw error;
+
+        const userIds = [...new Set(posts?.map((p) => p.user_id) || [])];
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("user_id, username, full_name, avatar_url, last_seen_at")
+          .in("user_id", userIds);
+        const profileMap = new Map(profiles?.map((p) => [p.user_id, p]));
+
+        const likesCountRes = await supabase.from("likes").select("post_id");
+        const commentsCountRes = await supabase.from("comments").select("post_id");
+
+        const likesMap: Record<string, number> = {};
+        const commentsMap: Record<string, number> = {};
+        likesCountRes.data?.forEach((l) => { likesMap[l.post_id] = (likesMap[l.post_id] || 0) + 1; });
+        commentsCountRes.data?.forEach((c) => { commentsMap[c.post_id] = (commentsMap[c.post_id] || 0) + 1; });
+
+        return (posts || []).map((post) => ({
+          ...post,
+          profiles: profileMap.get(post.user_id) || null,
+          likes_count: likesMap[post.id] || 0,
+          comments_count: commentsMap[post.id] || 0,
+          is_liked: false,
+          is_saved: false,
+        })) as PostWithProfile[];
+      }
+
       if (!user) return [];
 
       const { data: followings } = await supabase
@@ -78,7 +113,7 @@ export const useFeedPosts = () => {
         is_saved: savedPostIds.has(post.id),
       })) as PostWithProfile[];
     },
-    enabled: !!user,
+    enabled: !!user || isGuest,
   });
 };
 

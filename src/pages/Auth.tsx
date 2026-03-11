@@ -11,7 +11,7 @@ import connectoLogo from "@/assets/connecto-logo.png";
 import loginImage from "@/assets/login.avif";
 
 const Auth = () => {
-  const { user, signIn, signUp } = useAuth();
+  const { user, signIn, signUp, signInAsGuest } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -63,6 +63,19 @@ const Auth = () => {
       } else {
         toast({ title: "Signup failed", description: message, variant: "destructive" });
       }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGuestLogin = async () => {
+    setLoading(true);
+    try {
+      await signInAsGuest();
+      navigate("/");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "An unexpected error occurred";
+      toast({ title: "Guest login failed", description: message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -125,6 +138,25 @@ const Auth = () => {
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Logging in..." : "Log In"}
+                </Button>
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">
+                      Or
+                    </span>
+                  </div>
+                </div>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  className="w-full" 
+                  onClick={handleGuestLogin}
+                  disabled={loading}
+                >
+                  Continue as Guest
                 </Button>
               </form>
             </TabsContent>

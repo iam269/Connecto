@@ -7,6 +7,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isGuest, setIsGuest] = useState(false);
 
   useEffect(() => {
     // Set up auth state change listener
@@ -106,6 +107,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = async () => {
     try {
+      // If guest, just clear local state
+      if (isGuest) {
+        setIsGuest(false);
+        setUser(null);
+        setSession(null);
+        return;
+      }
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
     } catch (error) {
@@ -114,7 +122,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const value: AuthContextType = { user, session, loading, signUp, signIn, signOut };
+  const signInAsGuest = async () => {
+    try {
+      setIsGuest(true);
+      setUser(null);
+      setSession(null);
+    } catch (error) {
+      console.error("Guest signin error:", error);
+      throw error;
+    }
+  };
+
+  const value: AuthContextType = { user, session, loading, isGuest, signUp, signIn, signInAsGuest, signOut };
 
   return (
     <AuthContext.Provider value={value}>

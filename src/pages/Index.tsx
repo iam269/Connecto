@@ -7,9 +7,11 @@ import { useFeedPosts } from "@/hooks/usePosts";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
 import { PlusSquare } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
   const { data: posts, isLoading } = useFeedPosts();
+  const { isGuest } = useAuth();
 
   return (
     <Layout title="Home" subtitle="See what's happening in your network">
@@ -17,8 +19,8 @@ const Index = () => {
         {/* Stories */}
         <Stories />
 
-        {/* Post composer */}
-        <PostComposer />
+        {/* Post composer - only show for logged in users */}
+        {!isGuest && <PostComposer />}
 
         {/* Feed */}
         <div className="space-y-6">

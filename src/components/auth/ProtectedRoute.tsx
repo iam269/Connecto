@@ -1,8 +1,13 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuth();
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  requireAuth?: boolean; // If false, allows guest users
+}
+
+const ProtectedRoute = ({ children, requireAuth = true }: ProtectedRouteProps) => {
+  const { user, loading, isGuest } = useAuth();
 
   // Show loading spinner while checking authentication
   if (loading) {
@@ -13,8 +18,13 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  // Redirect to auth page if not logged in
-  if (!user) {
+  // If route doesn't require auth, allow both logged in users and guests
+  if (!requireAuth) {
+    return <>{children}</>;
+  }
+
+  // Redirect to auth page if not logged in and not guest
+  if (!user && !isGuest) {
     return <Navigate to="/auth" replace />;
   }
 

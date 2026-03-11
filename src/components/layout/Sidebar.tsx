@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Compass, Search, Users, MessageCircle, Heart, PlusSquare, User, Settings, LogOut } from "lucide-react";
+import { Home, Compass, Search, Users, MessageCircle, Heart, PlusSquare, User, Settings, LogOut, LucideIcon, Moon, Sun } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -7,25 +7,41 @@ import { useUnreadCount } from "@/hooks/useNotifications";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import connectoLogo from "@/assets/connecto-logo.png";
 import connectoIcon from "@/assets/connecto-icon.png";
-import { Moon, Sun } from "lucide-react";
 
-const navItems = [
-  { to: "/", icon: Home, label: "Home" },
-  { to: "/explore", icon: Compass, label: "Explore" },
-  { to: "/discover", icon: Search, label: "Discover" },
-  { to: "/connections", icon: Users, label: "Connections" },
-  { to: "/messages", icon: MessageCircle, label: "Messages" },
-  { to: "/notifications", icon: Heart, label: "Notifications", badge: true },
-  { to: "/create", icon: PlusSquare, label: "Create" },
-  { to: "/profile", icon: User, label: "Profile" },
-];
+interface NavItem {
+  to: string;
+  icon: LucideIcon;
+  label: string;
+  badge?: boolean;
+}
 
 const Sidebar = () => {
   const location = useLocation();
-  const { user, signOut } = useAuth();
+  const { user, signOut, isGuest } = useAuth();
   const { data: profile } = useProfile();
   const { theme, toggleTheme } = useTheme();
   const { data: unreadCount } = useUnreadCount();
+
+  // Navigation items for logged in users
+  const userNavItems: NavItem[] = [
+    { to: "/", icon: Home, label: "Home" },
+    { to: "/explore", icon: Compass, label: "Explore" },
+    { to: "/discover", icon: Search, label: "Discover" },
+    { to: "/connections", icon: Users, label: "Connections" },
+    { to: "/messages", icon: MessageCircle, label: "Messages" },
+    { to: "/notifications", icon: Heart, label: "Notifications", badge: true },
+    { to: "/create", icon: PlusSquare, label: "Create" },
+    { to: "/profile", icon: User, label: "Profile" },
+  ];
+
+  // Navigation items for guests (limited)
+  const guestNavItems: NavItem[] = [
+    { to: "/", icon: Home, label: "Home" },
+    { to: "/explore", icon: Compass, label: "Explore" },
+    { to: "/discover", icon: Search, label: "Discover" },
+  ];
+
+  const navItems = user || isGuest ? userNavItems : guestNavItems;
 
   return (
     <aside className="fixed left-0 top-0 z-40 hidden h-screen w-[72px] flex-col border-r border-border bg-card lg:flex xl:w-[240px]">
