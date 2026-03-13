@@ -119,6 +119,9 @@
       - `20260215164637_f1fe321b-40be-4525-995f-f720d815633a.sql`
       - `20260216181409_f2603ac3-5bd1-41d5-93e8-3f79b2947bdb.sql`
       - `20260221100451_7332021c-64d6-475d-a30e-ae91ea2b38a3.sql`
+      - `20260301132000_add_last_seen_at.sql`
+      - `20260301134000_enable_realtime.sql`
+      - `20260311201500_make_username_required.sql`
    
    c. Configure storage bucket for media uploads
    
@@ -180,6 +183,7 @@ Connecto/
 │   │   │   ├── card.tsx
 │   │   │   ├── dialog.tsx
 │   │   │   ├── input.tsx
+│   │   │   ├── OnlineIndicator.tsx  # Online status indicator
 │   │   │   └── ... (many more)
 │   │   └── users/           # User-related components
 │   │       └── SuggestedUsers.tsx
@@ -195,7 +199,8 @@ Connecto/
 │   │   ├── usePosts.ts
 │   │   ├── useProfile.ts
 │   │   ├── useStories.ts
-│   │   └── useSuggestedUsers.ts
+│   │   ├── useSuggestedUsers.ts
+│   │   └── useUpdateLastSeen.ts  # Auto-update last_seen timestamp
 │   ├── integrations/        # External integrations
 │   │   └── supabase/
 │   │       ├── client.ts    # Supabase client setup
@@ -234,7 +239,8 @@ Connecto/
 │       ├── 20260216181409_f2603ac3-5bd1-41d5-93e8-3f79b2947bdb.sql
 │       ├── 20260221100451_7332021c-64d6-475d-a30e-ae91ea2b38a3.sql
 │       ├── 20260301132000_add_last_seen_at.sql
-│       └── 20260301134000_enable_realtime.sql
+│       ├── 20260301134000_enable_realtime.sql
+│       └── 20260311201500_make_username_required.sql
 ├── components.json          # Shadcn components config
 ├── eslint.config.js         # ESLint configuration
 ├── index.html               # HTML entry point
